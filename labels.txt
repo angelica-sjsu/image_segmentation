@@ -3,3 +3,5 @@ _background_
 plume
 smoke
 fire
+dark
+thin
