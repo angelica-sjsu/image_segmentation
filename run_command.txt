@@ -1,0 +1,1 @@
+python labelme2voc.py dir_with_json destination_dir --labels labels.txt
