@@ -103,7 +103,7 @@
         ]
       ],
       "group_id": null,
-      "shape_type": "line",
+      "shape_type": "polygon",
       "flags": {}
     },
     {
