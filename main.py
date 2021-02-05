@@ -32,7 +32,7 @@ def train_model(X, y):
                        metrics=['accuracy'])
 
     history = unet_model.fit(x_train, y_train,
-                             batch_size=2,
+                             batch_size=4,
                              epochs=50,
                              validation_data=(x_test, y_test),
                              callbacks=callbacks_list)
@@ -41,10 +41,14 @@ def train_model(X, y):
 
 
 if __name__ == '__main__':
-    train_images_path = 'ss_train_voc/angelica/JPEGImages/'
-    train_masks_path = 'ss_train_voc/angelica/SegmentationClassPNG/'
-    test_images_path= 'ss_test_voc/angelica/JPEGImages/'
-    test_masks_path = 'ss_test_voc/angelica/SegmentationClassPNG/'
+    train_images_path = ['ss_train_voc/angelica/JPEGImages/',
+                         'ss_train_voc/olivia/JPEGImages']
+    train_masks_path = ['ss_train_voc/angelica/SegmentationClassPNG/',
+                        'ss_train_voc/olivia/SegmentationClassPNG/']
+    test_images_path= ['ss_test_voc/angelica/JPEGImages/',
+                       'ss_test_voc/olivia/JPEGImages/']
+    test_masks_path = ['ss_test_voc/angelica/SegmentationClassPNG/',
+                       'ss_test_voc/olivia/SegmentationClassPNG/']
 
     train_imgs, train_msks = data_prep.get_data(train_images_path, train_masks_path)
     data_prep.display_images([train_imgs[0], train_msks[0]])
