@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="c65b1fd5-a612-4276-8f76-d7361d02a19e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/image_pusher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+    <list default="true" id="c65b1fd5-a612-4276-8f76-d7361d02a19e" name="Default Changelist" comment="Remove space in courtney ss_test folder name">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000351.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000351.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000352.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000352.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000355.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000355.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000367.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000367.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000368.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000368.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000370.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000370.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000372.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000372.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000378.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000378.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000418.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000418.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000438.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000438.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000444.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000444.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000450.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000450.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000462.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000462.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000465.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000465.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ss_train/courtney/000470.json" beforeDir="false" afterPath="$PROJECT_DIR$/ss_train/courtney/000470.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,16 +40,29 @@
       </list>
     </option>
   </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="refs/heads/master" />
+  </component>
   <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1moSaJmP7Mm5PXqEVY90tzqRkHu" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -63,6 +99,7 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -74,9 +111,101 @@
       <option name="presentableId" value="Default" />
       <updated>1610158512664</updated>
     </task>
+    <task id="LOCAL-00001" summary="Commit labelme json files to ss_test repository">
+      <created>1611554805367</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1611554805367</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Commit labelme json files to ss_test courtney repository">
+      <created>1611694773095</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1611694773095</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Commit labelme json files to ss_test courtney repository">
+      <created>1611705666132</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1611705666132</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Commit labelme json files to ss_test courtney repository">
+      <created>1611707324461</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1611707324461</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Commit labelme json files to ss_test courtney repository">
+      <created>1611707588020</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1611707588020</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Commit labelme json files to ss_test courtney repository">
+      <created>1611707702180</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1611707702180</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Commit labelme json files with VCS to ss_test courtney repository">
+      <created>1611708090512</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1611708090512</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Remove space in courtney ss_test folder name">
+      <created>1611871134541</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1611871134541</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Remove space in courtney ss_test folder name">
+      <created>1611871143821</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1611871143821</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Commit labelme json files to ss_test repository" />
+    <MESSAGE value="Commit labelme json files to ss_test courtney repository" />
+    <MESSAGE value="Commit labelme json files with VCS to ss_test courtney repository" />
+    <MESSAGE value="Remove space in courtney ss_test folder name" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove space in courtney ss_test folder name" />
+  </component>
   <component name="WindowStateProjectService">
+    <state x="215" y="165" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1611554537708">
+      <screen x="0" y="23" width="1680" height="960" />
+    </state>
+    <state x="215" y="165" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.-62.1920.1057/0.23.1680.960@0.23.1680.960" timestamp="1611554537708" />
+    <state x="-1679" y="102" width="1480" height="712" key="DiffContextDialog" timestamp="1611707620448">
+      <screen x="-1920" y="-62" width="1920" height="990" />
+    </state>
+    <state x="-1679" y="102" width="1480" height="712" key="DiffContextDialog/-1920.-62.1920.990/0.23.1680.1027@-1920.-62.1920.990" timestamp="1611707620448" />
     <state width="1515" height="210" key="GridCell.Tab.0.bottom" timestamp="1610158947177">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
@@ -97,5 +226,24 @@
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="277" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1610158587829" />
+    <state x="508" y="276" key="Vcs.Push.Dialog.v2" timestamp="1611871148514">
+      <screen x="0" y="23" width="1680" height="962" />
+    </state>
+    <state x="508" y="276" key="Vcs.Push.Dialog.v2/-1920.-62.1920.1057/0.23.1680.962@0.23.1680.962" timestamp="1611871148514" />
+    <state x="-1339" y="198" key="Vcs.Push.Dialog.v2/-1920.-62.1920.990/0.23.1680.1027@-1920.-62.1920.990" timestamp="1611707649635" />
+    <state x="508" y="293" key="Vcs.Push.Dialog.v2/-1920.-62.1920.990/0.23.1680.1027@0.23.1680.1027" timestamp="1611708095614" />
+    <state x="656" y="294" key="com.intellij.openapi.vcs.changes.SpecificFilesViewDialog" timestamp="1611708069174">
+      <screen x="0" y="23" width="1680" height="1027" />
+    </state>
+    <state x="-1170" y="199" key="com.intellij.openapi.vcs.changes.SpecificFilesViewDialog/-1920.-62.1920.990/0.23.1680.1027@-1920.-62.1920.990" timestamp="1611707855719" />
+    <state x="656" y="294" key="com.intellij.openapi.vcs.changes.SpecificFilesViewDialog/-1920.-62.1920.990/0.23.1680.1027@0.23.1680.1027" timestamp="1611708069174" />
+    <state x="-1126" y="379" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1611707534704">
+      <screen x="-1920" y="-62" width="1920" height="990" />
+    </state>
+    <state x="-1126" y="379" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-1920.-62.1920.990/0.23.1680.1027@-1920.-62.1920.990" timestamp="1611707534704" />
+    <state x="-1194" y="359" key="git4idea.ui.GitResetDialog" timestamp="1611707656615">
+      <screen x="-1920" y="-62" width="1920" height="990" />
+    </state>
+    <state x="-1194" y="359" key="git4idea.ui.GitResetDialog/-1920.-62.1920.990/0.23.1680.1027@-1920.-62.1920.990" timestamp="1611707656615" />
   </component>
 </project>
