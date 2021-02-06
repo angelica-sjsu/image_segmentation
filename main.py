@@ -7,6 +7,11 @@ from tensorflow.keras.optimizers import Adam
 
 
 def train_model(X, y):
+    '''
+    calls all model related operations
+    @X: dictionary containing images
+    @y: dictionary containing groundtruth
+    '''
     x_train = X['train']
     y_train = y['train']
     x_test = X['test']
@@ -28,7 +33,8 @@ def train_model(X, y):
     unet_model = neural_net.unet((512, 512, 3))
 
     unet_model.compile(optimizer=Adam(),
-                       loss=tf.keras.losses.CategoricalCrossentropy(),
+                       # loss=tf.keras.losses.CategoricalCrossentropy(),
+                       loss = tf.keras.losses.BinaryCrossentropy(),
                        metrics=['accuracy'])
 
     history = unet_model.fit(x_train, y_train,
@@ -51,12 +57,12 @@ if __name__ == '__main__':
                        'ss_test_voc/olivia/SegmentationClassPNG/']
 
     train_imgs, train_msks = data_prep.get_data(train_images_path, train_masks_path)
-    data_prep.display_images([train_imgs[0], train_msks[0]])
+    #data_prep.display_images([train_imgs[0], train_msks[0]])
     test_imgs, test_msks = data_prep.get_data(test_images_path, test_masks_path)
     data_prep.display_images([test_imgs[0], test_msks[0]])
 
-    train_model(X={'train':train_imgs, 'test':test_imgs},
-                y={'train':train_msks, 'test':test_msks})
+    # train_model(X={'train':train_imgs, 'test':test_imgs},
+    #             y={'train':train_msks, 'test':test_msks})
 
 
 
