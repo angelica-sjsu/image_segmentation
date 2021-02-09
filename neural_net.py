@@ -1,9 +1,8 @@
 from tensorflow.keras.models import *
 from tensorflow.keras.layers import *
-from tensorflow.keras.optimizers import *
 from tensorflow.keras import backend as keras
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def dice_coef(y_true, y_pred):
@@ -58,3 +57,11 @@ def unet(input_size=(256, 256, 1)):
     conv10 = Conv2D(3, (1, 1), activation='sigmoid')(conv9)
 
     return Model(inputs=[inputs], outputs=[conv10])
+
+
+def history_plotter(history):
+    print('[STATUS] ===== plotting metrics')
+    pd.DataFrame(history.history).plot(figsize=(8, 5))
+    plt.grid(True)
+    plt.gca().set_ylim(0, 1)  # set the vertical range to [0-1]
+    plt.show()

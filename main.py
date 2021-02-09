@@ -31,13 +31,18 @@ def train_model(X, y):
                        loss=tf.keras.losses.CategoricalCrossentropy(),
                        metrics=['accuracy'])
 
+    # real-time data augmentation
+    data_aug = data_prep.data_augmentation()
+    data_aug.fit(x_train)
+
     history = unet_model.fit(x_train, y_train,
                              batch_size=4,
                              epochs=50,
                              validation_data=(x_test, y_test),
                              callbacks=callbacks_list)
 
-    print(history)
+    #print(history)
+    neural_net.history_plotter(history)
 
 
 if __name__ == '__main__':
@@ -51,12 +56,13 @@ if __name__ == '__main__':
                        'ss_test_voc/olivia/SegmentationClassPNG/']
 
     train_imgs, train_msks = data_prep.get_data(train_images_path, train_masks_path)
-    data_prep.display_images([train_imgs[0], train_msks[0]])
+    data_prep.display_images([train_imgs[117], train_msks[117]])
     test_imgs, test_msks = data_prep.get_data(test_images_path, test_masks_path)
     data_prep.display_images([test_imgs[0], test_msks[0]])
 
-    train_model(X={'train':train_imgs, 'test':test_imgs},
-                y={'train':train_msks, 'test':test_msks})
+
+    # train_model(X={'train':train_imgs, 'test':test_imgs},
+    #             y={'train':train_msks, 'test':test_msks})
 
 
 
