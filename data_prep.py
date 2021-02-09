@@ -21,6 +21,8 @@ def get_data(image_paths, mask_paths, flag='train', dim=512):
         image_names = os.listdir(image_path)
         mask_names = os.listdir(mask_path)
 
+        # add randomization
+
         for img_name, msk_name in zip(image_names, mask_names):
             img = cv2.imread(os.path.join(image_path, img_name))
             mask = cv2.imread(os.path.join(mask_path, img_name[:-4] + '.png'))
