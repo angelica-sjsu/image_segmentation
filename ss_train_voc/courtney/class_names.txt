@@ -1,0 +1,8 @@
+_background_
+plume
+smoke
+fire
+black
+thin
+thin smoke
+black smoke
