@@ -8,6 +8,7 @@ folder_names = ['angelica', 'courtney', 'olive', 'tim']
 train_folder = 'ss_train'
 test_folder = 'ss_test'
 
+
 def move_files(working_dir):
     os.chdir(working_dir)
 
