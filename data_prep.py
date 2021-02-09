@@ -1,8 +1,10 @@
 from IPython.display import clear_output
-import os
-import numpy as np
+from sklearn.utils import shuffle
 import cv2
 import matplotlib.pyplot as plt
+import numpy as np
+import os
+import tensorflow as tf
 
 
 def resize_image(image, dim=512):
@@ -11,7 +13,6 @@ def resize_image(image, dim=512):
     """
     img = cv2.resize(image, (dim, dim))
     return img
-
 
 def collapse_channel(image):
     """
@@ -34,6 +35,20 @@ def normalize_image(image):
     return img/255.0
 
 
+def data_augmentation():
+    data_aug = tf.keras.preprocessing.image.ImageDataGenerator(
+        horizontal_flip=True,
+        rotation_range=30,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
+        shear_range=0.2,
+        zoom_range=0.2
+    )
+
+    return data_aug
+
+
+
 def get_data(image_paths, mask_paths, flag='train', dim=512):
     """
     reads the images: normal and mask
@@ -45,18 +60,25 @@ def get_data(image_paths, mask_paths, flag='train', dim=512):
         image_names = os.listdir(image_path)
         mask_names = os.listdir(mask_path)
 
+        # TODO: add dataaugmentation: crop, flip, noise
+
         for img_name, msk_name in zip(image_names, mask_names):
             # read images
             img = cv2.imread(os.path.join(image_path, img_name))
             mask = cv2.imread(os.path.join(mask_path, img_name[:-4] + '.png'))
+
             mask = collapse_channel(np.array(mask))
-            # resize and normalize train images
-            img = resize_image(img)
-            img = normalize_image(img)
+            # resize 
+            img = resize_image(img)            
             mask = resize_image(mask)
+            # normalize
+            img = normalize_image(img)
 
             images.append(img)
             masks.append(mask)
+
+    # shuffle images and masks to avoid feeding the NN correlated images
+    images, masks = shuffle(images, masks)
     return np.array(images), np.array(masks)
 
 

@@ -1,2 +1,5 @@
+
 .idea\
 __pychache__\
+.xml
+misc.py
