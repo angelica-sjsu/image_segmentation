@@ -53,13 +53,21 @@ def train_model(X, y):
 
 if __name__ == '__main__':
     train_images_path = ['ss_train_voc/angelica/JPEGImages/',
-                         'ss_train_voc/olivia/JPEGImages']
+                         'ss_train_voc/courtney/JPEGImages/',
+                         'ss_train_voc/olivia/JPEGImages/',
+                         'ss_train_voc/tim/JPEGImages/']
     train_masks_path = ['ss_train_voc/angelica/SegmentationClassPNG/',
-                        'ss_train_voc/olivia/SegmentationClassPNG/']
+                        'ss_train_voc/courtney/SegmentationClassPNG/',
+                        'ss_train_voc/olivia/SegmentationClassPNG/',
+                        'ss_train_voc/tim/SegmentationClassPNG/']
     test_images_path= ['ss_test_voc/angelica/JPEGImages/',
-                       'ss_test_voc/olivia/JPEGImages/']
+                       'ss_test_voc/courtney/JPEGImages/',
+                       'ss_test_voc/olivia/JPEGImages/',
+                       'ss_test_voc/tim/JPEGImages/']
     test_masks_path = ['ss_test_voc/angelica/SegmentationClassPNG/',
-                       'ss_test_voc/olivia/SegmentationClassPNG/']
+                       'ss_test_voc/courtney/SegmentationClassPNG/',
+                       'ss_test_voc/olivia/SegmentationClassPNG/',
+                       'ss_test_voc/tim/SegmentationClassPNG/',]
 
     train_imgs, train_msks = data_prep.get_data(train_images_path, train_masks_path)
     data_prep.display_images([train_imgs[117], train_msks[117]])
