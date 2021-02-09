@@ -1,3 +1,4 @@
-.idea
-__pychache
+.idea/
+__pychache__/
 .xml
+misc.py
