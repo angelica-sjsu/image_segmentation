@@ -15,16 +15,17 @@ def load_checkpoint(checkpoint, model):
 
 
 def get_loaders(train_dirs, train_mask_dirs, val_dirs, val_mask_dirs,
+                train_transforms, val_transforms,
                 batch_size, num_workers=4, pin_memory=True):
 
-    train_ds = FireSmokeDataset(train_dirs, train_mask_dirs)
+    train_ds = FireSmokeDataset(train_dirs, train_mask_dirs, transform=train_transforms)
     train_loader = DataLoader(train_ds,
                               batch_size=batch_size,
                               num_workers=num_workers,
                               pin_memory=pin_memory,
                               shuffle=True)
 
-    val_ds = FireSmokeDataset(val_dirs, val_mask_dirs)
+    val_ds = FireSmokeDataset(val_dirs, val_mask_dirs, transform=val_transforms)
     val_loader = DataLoader(val_ds,
                             batch_size=batch_size,
                             num_workers=num_workers,
@@ -34,41 +35,38 @@ def get_loaders(train_dirs, train_mask_dirs, val_dirs, val_mask_dirs,
     return train_loader, val_loader
 
 
-def check_accuracy(loader, model, device='cpu'):
+def check_accuracy(loader, model, device='cuda'):
     num_correct = 0
     num_pixels = 0
+    dice_score = 0
     model.eval()
 
     with torch.no_grad():
         for x, y in loader:
-            x = x.permute(0,3,2,1)
+            # x = x.permute(0,3,2,1)
             x = x.to(device)
-            y = y.to(device)
-            preds = model(x)
-            #TODO: is this necessary??
-            #preds = (preds > 0.5).float()
+            y = y.to(device).unsqueeze(1)
+            preds = torch.sigmoid(model(x))
+            preds = (preds > 0.5).float()
             num_correct += (preds == y).sum()
             num_pixels += torch.numel(preds)
-            dice_score = (2*(preds*y).sum()) / ((preds+y).sum()+1e-8)
+            dice_score += (2*(preds*y).sum()) / ((preds+y).sum()+1e-8)
 
-    # TODO: fix accuracy
-    print(f"Got {num_correct}/{num_pixels} with acc {(num_correct/num_pixels)*100:.2f}")
-    # dice
+    print(f"Got {num_correct}/{num_pixels} with acc {num_correct/num_pixels*100:.2f}")
     print(f"Dice score: {dice_score/len(loader)}")
     model.train()
 
 
 def save_predictions_as_imgs(loader, model, folder='saved_images/', device="cpu"):
     model.eval()
+    print("=> Saving Images")
     for idx, (x,y) in enumerate(loader):
-        x = x.permute(0,3,2,1)
         x =x.to(device=device)
         with torch.no_grad():
-            #preds = torch.sigmoid(model(x))
-            preds = model(x)
-            preds = preds.float()
+            preds = torch.sigmoid(model(x))
+            preds = (preds > 0.5).float()
         torchvision.utils.save_image(preds,
                                      f"{folder}/pred_{idx}.png")
         torchvision.utils.save_image(y.unsqueeze(1),
-                                     f"{folder}/pred_{idx}.png")
-        model.train()
+                                     f"{folder}/target_{idx}.png")
+    model.train()

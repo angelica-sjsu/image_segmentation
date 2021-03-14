@@ -1,8 +1,8 @@
-import cv2
 import glob
 import numpy as np
-import torch
 from torch.utils.data import Dataset
+from PIL import Image
+from skimage import io
 
 
 class FireSmokeDataset(Dataset):
@@ -11,6 +11,16 @@ class FireSmokeDataset(Dataset):
         self.img_paths = img_paths
         self.mask_paths = mask_paths
         self.transform = transform
+        self.rgb_map = {
+            0: (0, 0, 0),
+            1: (0, 0, 128),
+            2: (0, 128, 0),
+            3: (0, 128, 128),
+            4: (128, 0, 0),
+            5: (128, 0, 128),
+            6: (128, 128, 0),
+            7: (128, 128, 128)
+        }
 
         # iterate all possible paths containing masks and images
         self.imgs = []
@@ -30,55 +40,29 @@ class FireSmokeDataset(Dataset):
         mask_path = self.masks[idx]
 
         # load image and mask
-        img = cv2.imread(img_path)
-        img = np.array(img)
-        mask = cv2.imread(mask_path)
+        image = np.array(Image.open(img_path).convert("RGB"))
+        io.imshow(image)
+        io.show()
 
-        # transform mask into an array and collapse channels
-        mask = np.array(mask)
-        mask = self.collapse_channel(mask)
+        mask = np.array(Image.open(mask_path))
+        io.imshow(mask)
+        io.show()
+        mask = self.two_classes_encoding(mask)
+        io.imshow(mask)
+        io.show()
 
-        # resize_images
-        img = self.resize(img)
-        mask = self.resize(mask)
+        if self.transform:
+            augmentations = self.transform(image=image, mask=mask)
+            image = augmentations["image"]
+            mask = augmentations["mask"]
 
-        # normalize
-        img = self.normalize(img)
+        return image, mask
 
-        # # augmentation with albumentations
-        # if self.transform is not None:
-        #     augmentations = self.transform(image=img, mask=mask)
-        #     img = augmentations['images']
-        #     mask = augmentations['mask']
-
-        #TODO: add image name
-        return img.astype(np.float32), mask.astype(np.float32)
-
-
-
-    def collapse_channel(self, mask):
-        additional_encoding = np.array([[128, 0, 0], [128, 128, 128],
-                                       [128, 0, 128], [128, 128, 0]])
-        # create an array that will host the transformed mask
-        collapsed = np.zeros((mask.shape[0], mask.shape[1]))
-        # find all unique elements in the mask
-        unique_arr = np.unique(mask.reshape(-1, mask.shape[2]), axis=0)
-        for idx, channel in enumerate(unique_arr):
-            indices = np.where(np.all(mask==channel, axis=-1))
-            # see if the current mask has additional encoding
-            present = np.where(np.all(additional_encoding == channel, axis=-1))
-            if len(present[0]) != 0:
-                collapsed[indices] = 2
-            else:
-                collapsed[indices] = idx
+    def two_classes_encoding(self, mask):
+        collapsed = np.zeros((mask.shape[0], mask.shape[1]), dtype=np.float32)
+        indices = np.where(mask!=0)
+        collapsed[indices] = 1
 
         return collapsed
-
-    def resize(self, img,dim=256):
-        return cv2.resize(img, (dim, dim))
-
-    def normalize(self, img):
-        im = img.astype(float)
-        return im/255.0
 
 
