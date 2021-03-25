@@ -6,7 +6,7 @@ from skimage import io
 
 
 class FireSmokeDataset(Dataset):
-    def __init__(self,img_paths, mask_paths, transform=None):
+    def __init__(self,img_paths, mask_paths, transform=None, isbin=False):
         #self.root = root
         self.img_paths = img_paths
         self.mask_paths = mask_paths
@@ -21,14 +21,15 @@ class FireSmokeDataset(Dataset):
             6: (128, 128, 0),
             7: (128, 128, 128)
         }
+        self.isbin = isbin
 
         # iterate all possible paths containing masks and images
         self.imgs = []
         self.masks = []
         for img_path, mask_path in zip(self.img_paths, self.mask_paths):
-            img_names = glob.glob(img_path + '*/*')
+            img_names = sorted(list(glob.glob(img_path + '*/*')))
             self.imgs.extend(img_names)
-            mask_names = glob.glob(mask_path + '*/*')
+            mask_names = sorted(list(glob.glob(mask_path + '*/*')))
             self.masks.extend(mask_names)
 
     def __len__(self):
@@ -41,15 +42,13 @@ class FireSmokeDataset(Dataset):
 
         # load image and mask
         image = np.array(Image.open(img_path).convert("RGB"))
-        io.imshow(image)
-        io.show()
 
+
+        #mask = np.array(Image.open(mask_path), dtype=np.float32)
         mask = np.array(Image.open(mask_path))
-        io.imshow(mask)
-        io.show()
-        mask = self.two_classes_encoding(mask)
-        io.imshow(mask)
-        io.show()
+
+        if self.isbin:
+         mask = self.two_classes_encoding(mask)
 
         if self.transform:
             augmentations = self.transform(image=image, mask=mask)
@@ -57,6 +56,7 @@ class FireSmokeDataset(Dataset):
             mask = augmentations["mask"]
 
         return image, mask
+
 
     def two_classes_encoding(self, mask):
         collapsed = np.zeros((mask.shape[0], mask.shape[1]), dtype=np.float32)

@@ -1,33 +1,80 @@
+# @Angelica
 import torch
-import torch.nn.functional as F
-from tqdm import tqdm
+import torchvision
+import albumentations as A   #pip install albumentations
+from albumentations.pytorch import ToTensorV2
+from PIL import Image
+from unet_model import UNET as nn
+import os
+import numpy as np
+import torch.optim as optim
+import sys
 
-from dice_loss import dice_coeff
+
+class Segmentation:
+
+    def __init__(self):
+        print('Parent Segmentation obj created...')
+
+    def transform(self, read_from_path, write_to_path):
+        print('Segmentation transform() not set!')
 
 
-def eval_net(net, loader, device):
-    """Evaluation without the densecrf with the dice coefficient"""
-    net.eval()
-    mask_type = torch.float32 if net.n_classes == 1 else torch.long
-    n_val = len(loader)  # the number of batch
-    tot = 0
+class UNET(Segmentation):
+    def __init__(self, unet, path_to_model=''):
+        self.model = unet
+        self.model_path = path_to_model
+        self.optimizer = optim.Adam(self.model.parameters(), lr=1e-4)
+        self.checkpoint = {
+            'state_dict': self.model.state_dict(),
+            'optimizer': self.optimizer.state_dict()
+        }
+        self.load_checkpoint(torch.load(path_to_model, map_location='cpu'), self.model)
 
-    with tqdm(total=n_val, desc='Validation round', unit='batch', leave=False) as pbar:
-        for batch in loader:
-            imgs, true_masks = batch['image'], batch['mask']
-            imgs = imgs.to(device=device, dtype=torch.float32)
-            true_masks = true_masks.to(device=device, dtype=mask_type)
+    def transform(self, read_from_path, write_to_path):
+        if not os.path.exists(write_to_path):
+            os.mkdir(write_to_path)
 
-            with torch.no_grad():
-                mask_pred = net(imgs)
+        transforms = A.Compose([
+            #A.Resize(height=640, width=360),
+            A.Normalize(
+                mean=[0.0, 0.0, 0.0],
+                std=[1.0, 1.0, 1.0],
+                max_pixel_value=255.0
+            ),
+            ToTensorV2(),
+        ])
 
-            if net.n_classes > 1:
-                tot += F.cross_entropy(mask_pred, true_masks).item()
-            else:
-                pred = torch.sigmoid(mask_pred)
-                pred = (pred > 0.5).float()
-                tot += dice_coeff(pred, true_masks).item()
-            pbar.update()
+        # load image
+        image = Image.open(read_from_path)
+        image = np.array(image)
+        transf = transforms(image=image)
+        image = transf['image'].unsqueeze(0)
 
-    net.train()
-    return tot / n_val
+        # make model predict!!
+        # self.model.eval()
+        #torch.cuda.empty_cache()
+        with torch.no_grad():
+            image = image.to(device='cuda')
+            preds = torch.sigmoid(model(image))
+            preds = (preds > 0.5).float()
+
+        torchvision.utils.save_image(preds,
+                                     f"{write_to_path}/unet_pred.png")
+
+
+    def load_checkpoint(self,checkpoint, model):
+        print("=> Loading checkpoint")
+        model.load_state_dict(checkpoint["state_dict"])
+
+
+
+
+# TODO: test code!!
+
+DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+model = nn(in_channels=3, out_channels=1).to(DEVICE)
+unet = UNET(model, 'checkpoint.pth.tar')
+#unet.transform('Ognisko_ubt_0126.jpeg.jpeg','eval_images')
+unet.transform('rawImage.png','eval_images')
+sys.exit()

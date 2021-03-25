@@ -2,6 +2,7 @@ import os
 import torch
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
+import sys
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
@@ -33,20 +34,29 @@ test_masks_path = ['ss_test_voc/angelica/SegmentationClassPNG',
                    'ss_test_voc/olivia/SegmentationClassPNG',
                    'ss_test_voc/tim/SegmentationClassPNG', ]
 
+# flags
+LOAD_MODEL = False
+LOAD_RETRAIN = True
+MULTICLASS = True
+# PATHS
+TRAIN_IMG_DIRS = train_images_path
+TRAIN_MASK_DIRS = train_masks_path
+VAL_IMG_DIRS = test_images_path
+VAL_MASK_DIRS = test_masks_path
 # hyperparameters
 LEARNING_RATE = 1e-4
+WEIGHT_DECAY = 1e-5
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
+LOSS = nn.CrossEntropyLoss() if MULTICLASS else nn.BCEWithLogitsLoss()
+OUTCHANNELS = 8 if MULTICLASS else 1
+BIN_CHECKPOINT = 'checkpoint.pth.tar'
+MC_CHECKPOINT = 'mc_checkpoint.pth.tar'
 BATCH_SIZE = 8
 NUM_EPOCHS = 10
 NUM_WORKERS = 2
 IMG_HEIGHT = 640
 IMG_WIDTH = 360
 PIN_MEMORY = True
-LOAD_MODEL = False
-TRAIN_IMG_DIRS = train_images_path
-TRAIN_MASK_DIRS = train_masks_path
-VAL_IMG_DIRS = test_images_path
-VAL_MASK_DIRS = test_masks_path
 
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
@@ -54,12 +64,19 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.to(device=DEVICE)
-        targets = targets.float().unsqueeze(1).to(device=DEVICE)
+        if MULTICLASS:
+            targets = targets.to(device=DEVICE)
+        else:
+            targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
         #forward: float16
         with torch.cuda.amp.autocast():
             predictions = model(data)
-            loss = loss_fn(predictions,targets)
+            if MULTICLASS:
+                loss = loss_fn(predictions,targets.long())
+            else:
+                loss = loss_fn(predictions, targets)
+
 
         #backward
         optimizer.zero_grad()
@@ -74,10 +91,9 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 def main():
     # transformations
     train_transforms = A.Compose([
-        A.Resize(height=IMG_HEIGHT, width=IMG_WIDTH),
+        A.RandomCrop(height=256, width=256, always_apply=True),
         A.Rotate(limit=35, p=1.0),
         A.HorizontalFlip(p=0.5),
-        A.VerticalFlip(p=0.1),
         A.Normalize(
             mean=[0.0, 0.0, 0.0],
             std=[1.0, 1.0, 1.0],
@@ -87,7 +103,6 @@ def main():
     ])
 
     val_transforms = A.Compose([
-        A.Resize(height=IMG_HEIGHT, width=IMG_WIDTH),
         A.Normalize(
             mean=[0.0, 0.0, 0.0],
             std=[1.0, 1.0, 1.0],
@@ -96,11 +111,8 @@ def main():
         ToTensorV2(),
     ])
 
-    # change out_channels for additional channels and change loss_fn to BCELoss
     model = UNET(in_channels=3, out_channels=1).to(DEVICE)
-    # UNET op layer has no sigmoid
-    loss_fn = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
 
     train_loader, val_loader = get_loaders(TRAIN_IMG_DIRS,
                                            TRAIN_MASK_DIRS,
@@ -113,25 +125,44 @@ def main():
                                            PIN_MEMORY)
 
     scale = torch.cuda.amp.GradScaler()
+    current_acc = 0
+    current_dice = 0
+    if LOAD_RETRAIN:
+        load_checkpoint(torch.load(BIN_CHECKPOINT), model)
+        layers = list(model.modules())
+        #change final layer
+        layers[0].final_conv = nn.Conv2d(64, OUTCHANNELS, kernel_size=1)
+        # move model to device: useful when GPU is available
+        model.to(device=DEVICE)
 
     for epoch in range(NUM_EPOCHS):
-        train_fn(train_loader, model, optimizer, loss_fn, scale)
+        train_fn(train_loader, model, optimizer, LOSS, scale)
 
         # save model
         checkpoint = {
             'state_dict': model.state_dict(),
             'optimizer': optimizer.state_dict()
         }
-        save_checkpoint(checkpoint)
 
         # check_Acc
-        check_accuracy(val_loader, model, device=DEVICE)
+        dice, acc = check_accuracy(val_loader, model, device=DEVICE, multiclass=MULTICLASS)
 
-        # print_samples
-        folder_name = 'saved_images'
-        if not os.path.exists(folder_name):
-            os.mkdir(folder_name)
-        save_predictions_as_imgs(val_loader, model, folder=folder_name, device=DEVICE)
+        if acc >= current_acc and dice >= current_dice:
+            current_acc = acc
+            current_dice = dice
+            # print_sample
+            if MULTICLASS:
+                name = MC_CHECKPOINT
+            elif not MULTICLASS:
+                name = BIN_CHECKPOINT
+            else:
+                name = 'mc_loadtraine.pth.tar'
+            save_checkpoint(checkpoint, fname=name)
+
+            folder_name = f'saved_images/'
+            if not os.path.exists(folder_name):
+                os.mkdir(folder_name)
+            save_predictions_as_imgs(val_loader, model, folder=folder_name, device=DEVICE, multiclass=MULTICLASS)
 
 
 if __name__ == "__main__":
