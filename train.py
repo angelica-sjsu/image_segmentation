@@ -36,8 +36,9 @@ test_masks_path = ['ss_test_voc/angelica/SegmentationClassPNG',
 
 # flags
 LOAD_MODEL = False
-LOAD_RETRAIN = True
+LOAD_RETRAIN = False
 MULTICLASS = True
+ISBIN = False if MULTICLASS else True
 # PATHS
 TRAIN_IMG_DIRS = train_images_path
 TRAIN_MASK_DIRS = train_masks_path
@@ -111,7 +112,7 @@ def main():
         ToTensorV2(),
     ])
 
-    model = UNET(in_channels=3, out_channels=1).to(DEVICE)
+    model = UNET(in_channels=3, out_channels=3).to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
 
     train_loader, val_loader = get_loaders(TRAIN_IMG_DIRS,
@@ -122,7 +123,8 @@ def main():
                                            val_transforms,
                                            BATCH_SIZE,
                                            NUM_WORKERS,
-                                           PIN_MEMORY)
+                                           PIN_MEMORY,
+                                           ISBIN)
 
     scale = torch.cuda.amp.GradScaler()
     current_acc = 0
@@ -131,6 +133,7 @@ def main():
         load_checkpoint(torch.load(BIN_CHECKPOINT), model)
         layers = list(model.modules())
         #change final layer
+        OUTCHANNELS = 3
         layers[0].final_conv = nn.Conv2d(64, OUTCHANNELS, kernel_size=1)
         # move model to device: useful when GPU is available
         model.to(device=DEVICE)
@@ -151,12 +154,14 @@ def main():
             current_acc = acc
             current_dice = dice
             # print_sample
-            if MULTICLASS:
-                name = MC_CHECKPOINT
-            elif not MULTICLASS:
-                name = BIN_CHECKPOINT
-            else:
-                name = 'mc_loadtraine.pth.tar'
+
+            # TODO: check the naming of saved models
+            # if MULTICLASS:
+            #     name = MC_CHECKPOINT
+            # elif not MULTICLASS:
+            #     name = BIN_CHECKPOINT
+            # elif LOAD_RETRAIN:
+            name = '3c_scratch.pth.tar'
             save_checkpoint(checkpoint, fname=name)
 
             folder_name = f'saved_images/'
@@ -167,5 +172,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-
+    # TODO: make confusion matrix
+    # TODO: evaluate model with videos
+    # TODO:
 

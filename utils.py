@@ -18,16 +18,16 @@ def load_checkpoint(checkpoint, model):
 
 def get_loaders(train_dirs, train_mask_dirs, val_dirs, val_mask_dirs,
                 train_transforms, val_transforms,
-                batch_size, num_workers=4, pin_memory=True):
+                batch_size, num_workers=4, pin_memory=True,is_bin=True):
 
-    train_ds = FireSmokeDataset(train_dirs, train_mask_dirs, transform=train_transforms)
+    train_ds = FireSmokeDataset(train_dirs, train_mask_dirs, transform=train_transforms,isbin=is_bin)
     train_loader = DataLoader(train_ds,
                               batch_size=batch_size,
                               num_workers=num_workers,
                               pin_memory=pin_memory,
                               shuffle=True)
 
-    val_ds = FireSmokeDataset(val_dirs, val_mask_dirs, transform=val_transforms)
+    val_ds = FireSmokeDataset(val_dirs, val_mask_dirs, transform=val_transforms,isbin=is_bin)
     val_loader = DataLoader(val_ds,
                             batch_size=1,
                             num_workers=num_workers,
