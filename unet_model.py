@@ -64,9 +64,9 @@ class UNET(nn.Module):
             x = self.ups[idx](x)
             # get skip connections
             skip_connection = skip_connections[idx//2]
-            # if x.shape != skip_connection.shape:
-            #     # add padding: this is useful since after the max pool images will always be smaller
-            #     x = TF.resize(x, size=skip_connection.shape[2:])
+            if x.shape != skip_connection.shape:
+                # add padding: this is useful since after the max pool images will always be smaller
+                x = TF.resize(x, size=skip_connection.shape[2:])
 
             # add skip in channels
             concat_skip = torch.cat((skip_connection, x), dim=1)
