@@ -28,17 +28,17 @@ train_masks_path = ['ss_train_voc/angelica/SegmentationClassPNG',
 test_images_path = ['ss_test_voc/angelica/JPEGImages',
                     'ss_test_voc/courtney/JPEGImages',
                     'ss_test_voc/olivia/JPEGImages',
-                    'ss_test_voc/tim/JPEGImages']
+                    ]
 test_masks_path = ['ss_test_voc/angelica/SegmentationClassPNG',
                    'ss_test_voc/courtney/SegmentationClassPNG',
                    'ss_test_voc/olivia/SegmentationClassPNG',
-                   'ss_test_voc/tim/SegmentationClassPNG', ]
+                   ]
 
 # flags
-LOAD_MODEL = False
+# LOAD_MODEL = False
 LOAD_RETRAIN = False
-MULTICLASS = True
-ISBIN = False if MULTICLASS else True
+ISBIN = True
+
 # PATHS
 TRAIN_IMG_DIRS = train_images_path
 TRAIN_MASK_DIRS = train_masks_path
@@ -48,10 +48,9 @@ VAL_MASK_DIRS = test_masks_path
 LEARNING_RATE = 1e-4
 WEIGHT_DECAY = 1e-5
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-LOSS = nn.CrossEntropyLoss() if MULTICLASS else nn.BCEWithLogitsLoss()
-OUTCHANNELS = 8 if MULTICLASS else 1
-BIN_CHECKPOINT = 'checkpoint.pth.tar'
-MC_CHECKPOINT = 'mc_checkpoint.pth.tar'
+LOSS = nn.BCEWithLogitsLoss()
+NUM_CLASSES = 1
+BIN_CHECKPOINT = 'bin_checkpoint.pth.tar'
 BATCH_SIZE = 8
 NUM_EPOCHS = 10
 NUM_WORKERS = 2
@@ -65,18 +64,12 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
 
     for batch_idx, (data, targets) in enumerate(loop):
         data = data.to(device=DEVICE)
-        if MULTICLASS:
-            targets = targets.to(device=DEVICE)
-        else:
-            targets = targets.float().unsqueeze(1).to(device=DEVICE)
+        targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
         #forward: float16
         with torch.cuda.amp.autocast():
             predictions = model(data)
-            if MULTICLASS:
-                loss = loss_fn(predictions,targets.long())
-            else:
-                loss = loss_fn(predictions, targets)
+            loss = loss_fn(predictions, targets)
 
 
         #backward
@@ -112,7 +105,7 @@ def main():
         ToTensorV2(),
     ])
 
-    model = UNET(in_channels=3, out_channels=3).to(DEVICE)
+    model = UNET(in_channels=3, out_channels=NUM_CLASSES).to(DEVICE)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
 
     train_loader, val_loader = get_loaders(TRAIN_IMG_DIRS,
@@ -124,19 +117,11 @@ def main():
                                            BATCH_SIZE,
                                            NUM_WORKERS,
                                            PIN_MEMORY,
-                                           ISBIN)
+                                           NUM_CLASSES)
 
     scale = torch.cuda.amp.GradScaler()
     current_acc = 0
     current_dice = 0
-    if LOAD_RETRAIN:
-        load_checkpoint(torch.load(BIN_CHECKPOINT), model)
-        layers = list(model.modules())
-        #change final layer
-        OUTCHANNELS = 3
-        layers[0].final_conv = nn.Conv2d(64, OUTCHANNELS, kernel_size=1)
-        # move model to device: useful when GPU is available
-        model.to(device=DEVICE)
 
     for epoch in range(NUM_EPOCHS):
         train_fn(train_loader, model, optimizer, LOSS, scale)
@@ -148,26 +133,20 @@ def main():
         }
 
         # check_Acc
-        dice, acc = check_accuracy(val_loader, model, device=DEVICE, multiclass=MULTICLASS)
+        dice, acc = check_accuracy(val_loader, model, device=DEVICE, num_classes=NUM_CLASSES)
 
-        if acc >= current_acc and dice >= current_dice:
+        if acc >= current_acc or dice >= current_dice:
             current_acc = acc
             current_dice = dice
             # print_sample
 
-            # TODO: check the naming of saved models
-            # if MULTICLASS:
-            #     name = MC_CHECKPOINT
-            # elif not MULTICLASS:
-            #     name = BIN_CHECKPOINT
-            # elif LOAD_RETRAIN:
-            name = '3c_scratch.pth.tar'
+            name = 'bin_checkpoint.pth.tar'
             save_checkpoint(checkpoint, fname=name)
 
             folder_name = f'saved_images/'
             if not os.path.exists(folder_name):
                 os.mkdir(folder_name)
-            save_predictions_as_imgs(val_loader, model, folder=folder_name, device=DEVICE, multiclass=MULTICLASS)
+            save_predictions_as_imgs(val_loader, model, folder=folder_name, device=DEVICE, multiclass=False)
 
 
 if __name__ == "__main__":

@@ -13,6 +13,8 @@ from time import time
 import matplotlib.pyplot as plt
 from skimage import io
 import cv2
+import streamlit as st
+import ffmpeg
 
 
 
@@ -153,30 +155,31 @@ class UNET(Segmentation):
 # TODO: evaluate model with a video
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-model = nn(in_channels=3, out_channels=4).to(DEVICE)
-#unet = UNET(model, 'checkpoint.pth.tar')
-unet = UNET(model, 'mc_loadtraine.pth.tar')
+# model = nn(in_channels=3, out_channels=1).to(DEVICE)
+# binary_unet = UNET(model, 'checkpoint.pth.tar')
+model = nn(in_channels=3, out_channels=3).to(DEVICE)
+multiclass_unet = UNET(model, 'three_classes_loadtrain.pth.tar')
 #unet = UNET(model, '3c_scratch.pth.tar')
 
 start = time()
 #unet.transform('Ognisko_ubt_0126.jpeg.jpeg','eval_images')
-unet.transform('5406.jpg','eval_images')
-end = time()
-print(f'Inference time: {end-start} seconds')
-sys.exit()
-# video = cv2.VideoCapture('train-3.avi')
-# idx = 0
-# while(True):
-#     # Capture frame-by-frame
-#     ret, frame = video.read()
-#
-#     # Our operations on the frame come here
-#     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-#
-#     pil_image = Image.fromarray(gray)
-#     start = time()
-#     unet.transform_frame(pil_image, 'eval_images', idx)
-#     end = time()
-#     print(f'Inferece time for {idx}: {end-start}')
-#     idx += 1
+# binary_unet.transform('5406.jpg','eval_images')
+# end = time()
+# print(f'Inference time: {end-start} seconds')
 # sys.exit()
+video = cv2.VideoCapture('train-3.avi')
+idx = 0
+while(True):
+    # Capture frame-by-frame
+    ret, frame = video.read()
+
+    # Our operations on the frame come here
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    pil_image = Image.fromarray(gray)
+    start = time()
+    multiclass_unet.transform_frame(pil_image, 'eval_images', idx)
+    end = time()
+    print(f'Inferece time for {idx}: {end-start}')
+    idx += 1
+sys.exit()
