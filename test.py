@@ -53,16 +53,15 @@ for chk in checkpoints:
         MULTICLASS = True
 
 
-    #load model
+    # load model
     model = UNET(in_channels=3, out_channels=num_classes)
-    # if DEVICE == 'cuda':
-    #     load_checkpoint(torch.load(chk), model)
-    # else:
     load_checkpoint(torch.load(chk, map_location=DEVICE), model)
     model = model.to(DEVICE)
 
+    # dataloader
     loader = single_loader(IMG_DIR, MASK_DIR, set_transforms=transforms, batch_size=1, num_classes=num_classes)
 
+    #check accuracy
     acc, dice, iou = check_accuracy(loader, model, DEVICE, num_classes, training=False)
     accuracies.append(acc)
     dices.append(dice)
@@ -71,22 +70,22 @@ for chk in checkpoints:
     save_predictions_as_imgs(loader, model, f'{chk}_images', DEVICE, training=False, multiclass=MULTICLASS)
 
 #visualize
-N = 3
-ind = np.arange(len(checkpoints))
-width = 0.25
+# N = 3
+# ind = np.arange(len(checkpoints))
+# width = 0.25
+#
+# bar1 = plt.bar(ind, accuracies, width, color='r')
+# bar2 = plt.bar(ind + width, dices, width, color='g')
+# bar3 = plt.bar(ind + width * 2, ious, width, color='b')
+#
+# plt.xlabel("Models")
+# plt.ylabel('Scores')
+# plt.title("Model Scores \n RT=retrained model from loaded BIN MODEL")
+#
+# plt.xticks(ind + width, names)
+# plt.legend((bar1, bar2, bar3), ('Accuracy', 'Dice', 'IOU'))
+# plt.show()
 
-bar1 = plt.bar(ind, accuracies, width, color='r')
-bar2 = plt.bar(ind + width, dices, width, color='g')
-bar3 = plt.bar(ind + width * 2, ious, width, color='b')
-
-plt.xlabel("Models")
-plt.ylabel('Scores')
-plt.title("Model Scores \n RT=retrained model from loaded BIN MODEL")
-
-plt.xticks(ind + width, names)
-plt.legend((bar1, bar2, bar3), ('Accuracy', 'Dice', 'IOU'))
-plt.show()
-
-
+print(names, accuracies, dices, ious)
 
 
