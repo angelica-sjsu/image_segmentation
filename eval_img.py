@@ -151,20 +151,11 @@ class UNET(Segmentation):
 
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-# model = nn(in_channels=3, out_channels=1).to(DEVICE)
-# binary_unet = UNET(model, 'bin_checkpoint.pth.tar')
-
 #4 classes
 model = nn(in_channels=3, out_channels=4).to(DEVICE)
-multiclass_unet = UNET(model, 'micro.pth.tar') #micro_retrain.pth.tar
-
-# 5 classes
-# model = nn(in_channels=3, out_channels=6).to(DEVICE)
-# multiclass_unet = UNET(model, 'macro.pth.tar') #macro_retrain.pth.tar
-
+multiclass_unet = UNET(model, 'macro_classes_loadtrain.pth.tar')
 start = time()
-#unet.transform('Ognisko_ubt_0126.jpeg.jpeg','eval_images')
-# binary_unet.transform('5406.jpg','eval_images')
-# end = time()
-# print(f'Inference time: {end-start} seconds')
+multiclass_unet.transform('Ognisko_ubt_0126.jpeg.jpeg','eval_images')
+end = time()
+print(f'Inference time: {end-start} seconds')
 sys.exit()
