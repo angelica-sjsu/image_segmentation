@@ -16,8 +16,8 @@ DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 BIN_CHK = 'bin_checkpoint.pth.tar'
 MACRO_CHK = 'macro.pth.tar'
 MACRO_RETRAIN_CHK = 'macro_retrain.pth.tar'
-MICRO_CHK = 'micro.pth.tar'
-MICRO_RETRAIN_CHK = 'micro_retrain.pth.tar'
+# MICRO_CHK = 'micro.pth.tar'
+# MICRO_RETRAIN_CHK = 'micro_retrain.pth.tar'
 IMG_DIR = ['ss_test_voc/tim/JPEGImages']
 MASK_DIR = ['ss_test_voc/tim/SegmentationClassPNG']
 
@@ -33,8 +33,8 @@ transforms = A.Compose([
         ToTensorV2(),
     ])
 
-checkpoints = [BIN_CHK, MACRO_CHK, MACRO_RETRAIN_CHK, MICRO_CHK, MICRO_RETRAIN_CHK]
-names = ['BIN', '4-CL', '4CL-RT', '6CL', '6CL-RT']
+checkpoints = [BIN_CHK, MACRO_CHK, MACRO_RETRAIN_CHK]
+names = ['BIN', '4-CL', '4CL-RT']
 
 # metrics
 accuracies = []
